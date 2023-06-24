@@ -33,4 +33,20 @@ class IncomeController extends Controller
             info($th->getMessage());
         }
     }
+
+    public function show(Income $income){
+        $income = Income::where('id', $income->id)
+        ->first();
+
+        return response()->json($income);
+    }
+
+    public function destroy(Income $income)
+    {
+        try {
+            $income->delete();
+        } catch (\Throwable $th) {
+            info($th->getMessage());
+        }
+    }
 }

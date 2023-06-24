@@ -16,6 +16,7 @@ return new class extends Migration
             $table->date('date');
             $table->string('income');
             $table->float('amount');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
