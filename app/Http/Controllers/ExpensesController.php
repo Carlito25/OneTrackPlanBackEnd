@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Expenses;
 use App\Http\Requests\ExpensesRequest;
-
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 class ExpensesController extends Controller
 {
     public function index()
@@ -27,20 +28,20 @@ class ExpensesController extends Controller
                 ]
             );
             if ($exp->wasRecentlyCreated) {
-                return response()->json();
+                return response()->json([
+                    'status' => "Created",
+                    'message' => "Expenses Successfully Created"
+                ]);
+            } else {
+                return response()->json([
+                    'status' => "Updated",
+                    'message' => "Expenses Successfully Updated"
+                ]);
             }
         } catch (\Throwable $th) {
             info($th->getMessage());
         }
     }
-
-    // public function show($id)
-    // {
-    //     $expense = Expenses::find($id);
-    //     dd($expense);
-
-    //     return response()->json($expense);
-    // }
     public function show(Expenses $expense){
         $expense = Expenses::where('id', $expense->id)
         ->first();
@@ -58,5 +59,43 @@ class ExpensesController extends Controller
             info($th->getMessage());
             return response()->json('Error deleting expense', 500);
         }
+    }
+
+    public function getMonthlyTotal()
+    {
+        $startDate = now()->subDays(30);
+        $endDate = now();
+
+        $expensesMonthlyTotal = DB::table('expensestable')
+            ->whereNull('deleted_at')
+            ->whereBetween('date', [$startDate, $endDate])
+            ->sum('amount');
+
+        return response()->json(['expensesMonthlyTotal' => $expensesMonthlyTotal]);
+    }
+    public function getWeeklyTotal()
+    {
+        $startDate = now()->subDays(7);
+        $endDate = now();
+
+        $expensesWeeklyTotal = DB::table('expensestable')
+            ->whereNull('deleted_at')
+            ->whereBetween('date', [$startDate, $endDate])
+            ->sum('amount');
+
+        return response()->json(['expensesWeeklyTotal' => $expensesWeeklyTotal]);
+    }
+
+    public function getDailyTotal()
+    {
+        $timezone = 'Asia/Manila';
+        $dateToday = Carbon::now($timezone);
+
+        $expensesDailyTotal = DB::table('expensestable')
+            ->whereNull('deleted_at')
+            ->where('date', $dateToday->toDateString())
+            ->sum('amount');
+
+        return response()->json(['expensesDailyTotal' => $expensesDailyTotal]);
     }
 }

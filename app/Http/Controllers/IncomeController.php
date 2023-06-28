@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Income;
 use App\Http\Requests\IncomeRequest;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class IncomeController extends Controller
 {
@@ -27,16 +29,25 @@ class IncomeController extends Controller
                 ]
             );
             if ($inc->wasRecentlyCreated) {
-                return response()->json();
+                return response()->json([
+                    'status' => "Created",
+                    'message' => "Income Successfully Created"
+                ]);
+            } else {
+                return response()->json([
+                    'status' => "Updated",
+                    'message' => "Income Successfully Updated"
+                ]);
             }
         } catch (\Throwable $th) {
             info($th->getMessage());
         }
     }
 
-    public function show(Income $income){
+    public function show(Income $income)
+    {
         $income = Income::where('id', $income->id)
-        ->first();
+            ->first();
 
         return response()->json($income);
     }
@@ -48,5 +59,46 @@ class IncomeController extends Controller
         } catch (\Throwable $th) {
             info($th->getMessage());
         }
+    }
+
+    public function getMonthlyTotal()
+    {
+        $startDate = now()->subDays(30);
+        $endDate = now();
+
+        $incomeTotal = DB::table('incomes')
+            ->whereNull('deleted_at')
+            ->whereBetween('date', [$startDate, $endDate])
+            ->sum('amount');
+
+        return response()->json(['incomeTotal' => $incomeTotal]);
+    }
+
+   
+
+    public function getWeeklyTotal()
+    {
+        $startDate = now()->subDays(7);
+        $endDate = now();
+
+        $incomeWeeklyTotal = DB::table('incomes')
+            ->whereNull('deleted_at')
+            ->whereBetween('date', [$startDate, $endDate])
+            ->sum('amount');
+
+        return response()->json(['incomeWeeklyTotal' => $incomeWeeklyTotal]);
+    }
+
+    public function getDailyTotal()
+    {
+        $timezone = 'Asia/Manila';
+        $dateToday = Carbon::now($timezone);
+
+        $incomeDailyTotal = DB::table('incomes')
+            ->whereNull('deleted_at')
+            ->where('date', $dateToday->toDateString())
+            ->sum('amount');
+
+        return response()->json(['incomeDailyTotal' => $incomeDailyTotal]);
     }
 }
