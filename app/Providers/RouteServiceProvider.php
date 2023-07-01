@@ -24,8 +24,14 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // RateLimiter::for('api', function (Request $request) {
+        //     return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        // });
+
+
+       // Avoid the 429 (Too Many Requests) if the user refresh multiple times the browser
         RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+            return Limit::none();
         });
 
         $this->routes(function () {

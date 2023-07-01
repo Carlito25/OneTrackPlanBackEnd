@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ExpensesController;
+use App\Http\Controllers\TaskController;
 
 Route::resource('income', IncomeController::class);
 Route::get('/incomeMonthlyTotal', 'App\Http\Controllers\IncomeController@getMonthlyTotal');
@@ -16,6 +17,12 @@ Route::get('/expensesWeeklyTotal', 'App\Http\Controllers\ExpensesController@getW
 Route::get('/expensesDailyTotal', 'App\Http\Controllers\ExpensesController@getDailyTotal');
 
 
+Route::middleware('throttle:60,1')->group(function () {
+    Route::resource('task', TaskController::class);
+    Route::put('task/{id}', [TaskController::class, 'updateTaskStatus']);
+});
+
+Route::get('/taskCompleted', [TaskController::class, 'getCompletedTask']);
 
 
 
