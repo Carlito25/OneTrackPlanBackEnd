@@ -63,8 +63,9 @@ class IncomeController extends Controller
 
     public function getMonthlyTotal()
     {
-        $startDate = now()->subDays(30);
-        $endDate = now();
+        $timezone = 'Asia/Manila';
+        $startDate = Carbon::now($timezone)->subDays(30);
+        $endDate = Carbon::now($timezone);
 
         $incomeTotal = DB::table('incomes')
             ->whereNull('deleted_at')
@@ -78,8 +79,9 @@ class IncomeController extends Controller
 
     public function getWeeklyTotal()
     {
-        $startDate = now()->subDays(7);
-        $endDate = now();
+        $timezone = 'Asia/Manila';
+        $startDate = Carbon::now($timezone)->subDays(7);
+        $endDate = Carbon::now($timezone);
 
         $incomeWeeklyTotal = DB::table('incomes')
             ->whereNull('deleted_at')

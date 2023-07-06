@@ -63,8 +63,9 @@ class ExpensesController extends Controller
 
     public function getMonthlyTotal()
     {
-        $startDate = now()->subDays(30);
-        $endDate = now();
+        $timezone = 'Asia/Manila';
+        $startDate = Carbon::now($timezone)->subDays(30);
+        $endDate = Carbon::now($timezone);
 
         $expensesMonthlyTotal = DB::table('expensestable')
             ->whereNull('deleted_at')
@@ -75,8 +76,9 @@ class ExpensesController extends Controller
     }
     public function getWeeklyTotal()
     {
-        $startDate = now()->subDays(7);
-        $endDate = now();
+        $timezone = 'Asia/Manila';
+        $startDate = Carbon::now($timezone)->subDays(7);
+        $endDate = Carbon::now($timezone);
 
         $expensesWeeklyTotal = DB::table('expensestable')
             ->whereNull('deleted_at')

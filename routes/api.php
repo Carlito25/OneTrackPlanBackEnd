@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\ContentPlannerController;
 
 Route::resource('income', IncomeController::class);
 Route::get('/incomeMonthlyTotal', 'App\Http\Controllers\IncomeController@getMonthlyTotal');
@@ -24,6 +25,8 @@ Route::middleware('throttle:60,1')->group(function () {
 
 Route::get('/taskCompleted', [TaskController::class, 'getCompletedTask']);
 
+
+Route::resource('contentplanner', ContentPlannerController::class);
 
 
 
