@@ -27,6 +27,9 @@ Route::get('/taskCompleted', [TaskController::class, 'getCompletedTask']);
 
 
 Route::resource('contentplanner', ContentPlannerController::class);
+Route::get('/contentDraft', 'App\Http\Controllers\ContentPlannerController@getDraftContent');
+Route::get('/contentScheduled', 'App\Http\Controllers\ContentPlannerController@getScheduledContent');
+Route::get('/contentPublished', 'App\Http\Controllers\ContentPlannerController@getPublishedContent');
 
 
 
