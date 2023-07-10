@@ -6,6 +6,7 @@ use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ContentPlannerController;
+use App\Http\Controllers\UserController;
 
 Route::resource('income', IncomeController::class);
 Route::get('/incomeMonthlyTotal', 'App\Http\Controllers\IncomeController@getMonthlyTotal');
@@ -27,6 +28,14 @@ Route::get('/taskCompleted', [TaskController::class, 'getCompletedTask']);
 
 
 Route::resource('contentplanner', ContentPlannerController::class);
+
+
+// Remove the resource route for 'user'
+Route::resource('user', UserController::class)->except(['create', 'edit']);
+
+// Add individual route for login
+Route::post('/login', [UserController::class, 'login']);
+
 
 
 
