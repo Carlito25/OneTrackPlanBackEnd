@@ -12,5 +12,5 @@ class ContentPlanner extends Model
     use SoftDeletes;
     protected $guarded = [];
 
-    protected $table = 'contentplanner';
+   protected $table = 'contentplanners';
 }
