@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('contentplanner', function (Blueprint $table) {
+        Schema::create('contentplanners', function (Blueprint $table) {
             $table->id();
             $table->date('date');
             $table->string('category');
             $table->string('description');
             $table->string('status');
             $table->string('channels');
-            $table->string('notes');
+            $table->string('notes')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('contentplanner');
+        Schema::dropIfExists('contentplanners');
     }
 };

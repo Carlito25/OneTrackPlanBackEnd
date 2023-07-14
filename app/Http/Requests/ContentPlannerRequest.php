@@ -27,7 +27,7 @@ class ContentPlannerRequest extends FormRequest
             'description' => 'required',
             'status' => 'required',
             'channels' => 'required',
-            'notes' => 'required',
+            'notes' => 'nullable | string',
         ];
     }
 }
