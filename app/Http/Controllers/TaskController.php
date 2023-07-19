@@ -9,21 +9,31 @@ use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     $tasks = Task::whereNull('isCompletedTask')
+    //     ->orWhere('isCompletedTask', false)
+    //     ->get();
+
+    // return response()->json($tasks);
+    // }
+
+    public function getUserTask($userId)
     {
-        $tasks = Task::whereNull('isCompletedTask')
+        $tasks = Task::where('user_id', $userId)
+        ->whereNull('isCompletedTask')
         ->orWhere('isCompletedTask', false)
         ->get();
 
-    return response()->json($tasks);
+        return response()->json($tasks);
     }
-
     public function store(TaskRequest $request)
     {
         try {
             $tas = Task::updateOrCreate(
                 ['id' => $request['task_id']],
                 [
+                    'user_id' => $request['user_id'],
                     'taskInfo' => $request['taskInfo'],
                     'taskDescription' => $request['taskDescription'],
                     'date' => $request['date'],
@@ -76,9 +86,10 @@ class TaskController extends Controller
         return response()->json(['message' => 'Task status updated successfully']);
     }
 
-    public function getCompletedTask()
+    public function getCompletedTask($userId)
     {
         $completedTask = DB::table('tasks')
+            ->where('user_id', $userId)
             ->where('isCompletedTask', true)
             ->whereNull('deleted_at')
             ->get();

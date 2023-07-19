@@ -8,17 +8,28 @@ use App\Http\Requests\ContentPlannerRequest;
 use Illuminate\Support\Facades\DB;
 class ContentPlannerController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     $content = ContentPlanner::where('status', 'Draft')
+    //     ->orWhere('status', 'Scheduled')
+    //     ->get();
+
+    //     return response()->json($content);
+    // }
+
+    public function getUserContent($userId)
     {
-        $content = ContentPlanner::where('status', 'Draft')
-        ->orWhere('status', 'Scheduled')
+        $content = ContentPlanner::where('user_id', $userId)
+        ->whereIn('status', ['Draft', 'Scheduled'])
         ->get();
 
         return response()->json($content);
     }
 
-    public function getPublishedContent(){
-        $content = ContentPlanner::where('status', 'Published')
+    public function getPublishedContent($userId){
+
+        $content = ContentPlanner::where('user_id', $userId)
+        ->where('status', 'Published')
         ->get();
 
         return response()->json($content);
@@ -30,6 +41,7 @@ class ContentPlannerController extends Controller
             $cont = ContentPlanner::updateOrCreate(
                 ['id' => $request['content_id']],
                 [
+                    'user_id' => $request['user_id'],
                     'date' => $request['date'],
                     'category' => $request['category'],
                     'description' => $request['description'],
@@ -72,8 +84,9 @@ class ContentPlannerController extends Controller
         }
     }
 
-    public function getDraftContent(){
+    public function getDraftContent($userId){
         $draftCount =  DB::table('contentplanners')
+        ->where('user_id', $userId)
         ->whereNull('deleted_at')
         ->where('status', 'Draft')
         ->count();
@@ -81,8 +94,9 @@ class ContentPlannerController extends Controller
         return $draftCount;
     }
 
-    public function getScheduledContent(){
+    public function getScheduledContent($userId){
         $scheduledCount =  DB::table('contentplanners')
+        ->where('user_id', $userId)
         ->whereNull('deleted_at')
         ->where('status', 'Scheduled')
         ->count();
