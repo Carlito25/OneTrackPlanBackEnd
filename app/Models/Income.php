@@ -12,4 +12,7 @@ class Income extends Model
     use SoftDeletes;
 
     protected $guarded = [];
+
+    protected $fillable = ['user_id', 'date', 'income', 'amount'];
+
 }

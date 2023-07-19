@@ -7,11 +7,19 @@ use App\Models\Expenses;
 use App\Http\Requests\ExpensesRequest;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+
 class ExpensesController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     $expenses = Expenses::get();
+
+    //     return response()->json($expenses);
+    // }
+
+    public function getUserExpenses($userId)
     {
-        $expenses = Expenses::get();
+        $expenses = Expenses::where('user_id', $userId)->get();
 
         return response()->json($expenses);
     }
@@ -22,6 +30,7 @@ class ExpensesController extends Controller
             $exp = Expenses::updateOrCreate(
                 ['id' => $request['expenses_id']],
                 [
+                    'user_id' => $request['user_id'],
                     'date' => $request['date'],
                     'expenses' => $request['expenses'],
                     'amount' => $request['amount'],
@@ -42,13 +51,14 @@ class ExpensesController extends Controller
             info($th->getMessage());
         }
     }
-    public function show(Expenses $expense){
+    public function show(Expenses $expense)
+    {
         $expense = Expenses::where('id', $expense->id)
-        ->first();
+            ->first();
 
         return response()->json($expense);
     }
-    
+
 
     public function destroy(Expenses $expense)
     {
@@ -61,26 +71,28 @@ class ExpensesController extends Controller
         }
     }
 
-    public function getMonthlyTotal()
+    public function getMonthlyTotal($userId)
     {
         $timezone = 'Asia/Manila';
         $startDate = Carbon::now($timezone)->subDays(30);
         $endDate = Carbon::now($timezone);
 
         $expensesMonthlyTotal = DB::table('expensestable')
+            ->where('user_id', $userId)
             ->whereNull('deleted_at')
             ->whereBetween('date', [$startDate, $endDate])
             ->sum('amount');
 
         return response()->json(['expensesMonthlyTotal' => $expensesMonthlyTotal]);
     }
-    public function getWeeklyTotal()
+    public function getWeeklyTotal($userId)
     {
         $timezone = 'Asia/Manila';
         $startDate = Carbon::now($timezone)->subDays(7);
         $endDate = Carbon::now($timezone);
 
         $expensesWeeklyTotal = DB::table('expensestable')
+            ->where('user_id', $userId)
             ->whereNull('deleted_at')
             ->whereBetween('date', [$startDate, $endDate])
             ->sum('amount');
@@ -88,12 +100,13 @@ class ExpensesController extends Controller
         return response()->json(['expensesWeeklyTotal' => $expensesWeeklyTotal]);
     }
 
-    public function getDailyTotal()
+    public function getDailyTotal($userId)
     {
         $timezone = 'Asia/Manila';
         $dateToday = Carbon::now($timezone);
 
         $expensesDailyTotal = DB::table('expensestable')
+            ->where('user_id', $userId)
             ->whereNull('deleted_at')
             ->where('date', $dateToday->toDateString())
             ->sum('amount');

@@ -12,6 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('contentplanners', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->id();
             $table->date('date');
             $table->string('category');
