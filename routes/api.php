@@ -14,13 +14,16 @@ Route::get('/incomeMonthlyTotal/user_id/{userId}', 'App\Http\Controllers\IncomeC
 Route::get('/incomeWeeklyTotal/user_id/{userId}', 'App\Http\Controllers\IncomeController@getWeeklyTotal');
 Route::get('/incomeDailyTotal/user_id/{userId}', 'App\Http\Controllers\IncomeController@getDailyTotal');
 Route::get('incomes/user_id/{userId}', 'App\Http\Controllers\IncomeController@getUserIncomes');
-
+Route::get('/incomeWeekly/user_id/{userId}', 'App\Http\Controllers\IncomeController@getUserIncomesWeekly');
+Route::get('/incomeMonthly/user_id/{userId}', 'App\Http\Controllers\IncomeController@getUserIncomesMonthly');
 
 Route::resource('expenses', ExpensesController::class);
 Route::get('/expensesMonthlyTotal/user_id/{userId}', 'App\Http\Controllers\ExpensesController@getMonthlyTotal');
 Route::get('/expensesWeeklyTotal/user_id/{userId}', 'App\Http\Controllers\ExpensesController@getWeeklyTotal');
 Route::get('/expensesDailyTotal/user_id/{userId}', 'App\Http\Controllers\ExpensesController@getDailyTotal');
 Route::get('expenses/user_id/{userId}', 'App\Http\Controllers\ExpensesController@getUserExpenses');
+Route::get('/expensesWeekly/user_id/{userId}', 'App\Http\Controllers\ExpensesController@getUserExpensesWeekly');
+Route::get('/expensesMonthly/user_id/{userId}', 'App\Http\Controllers\ExpensesController@getUserExpensesMonthly');
 
 Route::middleware('throttle:60,1')->group(function () {
     Route::resource('task', TaskController::class);
@@ -35,6 +38,8 @@ Route::get('/contentDraft/user_id/{userId}', 'App\Http\Controllers\ContentPlanne
 Route::get('/contentScheduled/user_id/{userId}', 'App\Http\Controllers\ContentPlannerController@getScheduledContent');
 Route::get('/contentPublished/user_id/{userId}', 'App\Http\Controllers\ContentPlannerController@getPublishedContent');
 Route::get('contentplanner/user_id/{userId}', 'App\Http\Controllers\ContentPlannerController@getUserContent');
+Route::get('/contentplannerWeekly/user_id/{userId}', 'App\Http\Controllers\ContentPlannerController@getUserContentWeekly');
+Route::get('/contentplannerMonthly/user_id/{userId}', 'App\Http\Controllers\ContentPlannerController@getUserContentMonthly');
 
 
 Route::resource('user', UserController::class);

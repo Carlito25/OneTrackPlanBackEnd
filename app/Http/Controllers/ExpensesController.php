@@ -23,6 +23,34 @@ class ExpensesController extends Controller
 
         return response()->json($expenses);
     }
+    public function getUserExpensesWeekly($userId)
+    {
+        $timezone = 'Asia/Manila';
+        $startDate = Carbon::now($timezone)->subDays(7);
+        $endDate = Carbon::now($timezone);
+
+        $expenses = Expenses::where('user_id', $userId)
+            ->whereNull('deleted_at')
+            ->whereBetween('date', [$startDate, $endDate])
+            ->get();
+
+        return response()->json($expenses);
+    }
+
+    public function getUserExpensesMonthly($userId)
+    {
+        $timezone = 'Asia/Manila';
+        $startDate = Carbon::now($timezone)->subDays(30);
+        $endDate = Carbon::now($timezone);
+
+        $expenses = Expenses::where('user_id', $userId)
+            ->whereNull('deleted_at')
+            ->whereBetween('date', [$startDate, $endDate])
+            ->get();
+
+        return response()->json($expenses);
+    }
+
 
     public function store(ExpensesRequest $request)
     {

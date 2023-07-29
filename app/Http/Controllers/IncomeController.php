@@ -27,6 +27,33 @@ class IncomeController extends Controller
         return response()->json($incomes);
     }
 
+    public function getUserIncomesWeekly($userId)
+    {
+        $timezone = 'Asia/Manila';
+        $startDate = Carbon::now($timezone)->subDays(7);
+        $endDate = Carbon::now($timezone);
+
+        $incomes = Income::where('user_id', $userId)
+            ->whereNull('deleted_at')
+            ->whereBetween('date', [$startDate, $endDate])
+            ->get();
+
+        return response()->json($incomes);
+    }
+
+    public function getUserIncomesMonthly($userId)
+    {
+        $timezone = 'Asia/Manila';
+        $startDate = Carbon::now($timezone)->subDays(30);
+        $endDate = Carbon::now($timezone);
+
+        $incomes = Income::where('user_id', $userId)
+            ->whereNull('deleted_at')
+            ->whereBetween('date', [$startDate, $endDate])
+            ->get();
+
+        return response()->json($incomes);
+    }
     public function store(IncomeRequest $request)
     {
         try {
