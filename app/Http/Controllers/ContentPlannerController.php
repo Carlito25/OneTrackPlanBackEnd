@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\ContentPlanner;
 use App\Http\Requests\ContentPlannerRequest;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
 class ContentPlannerController extends Controller
 {
     // public function index()
@@ -20,17 +22,48 @@ class ContentPlannerController extends Controller
     public function getUserContent($userId)
     {
         $content = ContentPlanner::where('user_id', $userId)
-        ->whereIn('status', ['Draft', 'Scheduled'])
-        ->get();
+            ->whereIn('status', ['Draft', 'Scheduled'])
+            ->get();
 
         return response()->json($content);
     }
 
-    public function getPublishedContent($userId){
+    public function getUserContentWeekly($userId)
+    {
+        $timezone = 'Asia/Manila';
+        $startDate = Carbon::now($timezone)->subDays(7);
+        $endDate = Carbon::now($timezone);
 
         $content = ContentPlanner::where('user_id', $userId)
-        ->where('status', 'Published')
-        ->get();
+            ->whereIn('status', ['Draft', 'Scheduled'])
+            ->whereNull('deleted_at')
+            ->whereBetween('date', [$startDate, $endDate])
+            ->get();
+
+        return response()->json($content);
+    }
+
+    public function getUserContentMonthly($userId)
+    {
+        $timezone = 'Asia/Manila';
+        $startDate = Carbon::now($timezone)->subDays(30);
+        $endDate = Carbon::now($timezone);
+
+        $content = ContentPlanner::where('user_id', $userId)
+            ->whereIn('status', ['Draft', 'Scheduled'])
+            ->whereNull('deleted_at')
+            ->whereBetween('date', [$startDate, $endDate])
+            ->get();
+
+        return response()->json($content);
+    }
+
+    public function getPublishedContent($userId)
+    {
+
+        $content = ContentPlanner::where('user_id', $userId)
+            ->where('status', 'Published')
+            ->get();
 
         return response()->json($content);
     }
@@ -66,9 +99,10 @@ class ContentPlannerController extends Controller
         }
     }
 
-    public function show(ContentPlanner $contentplanner){
+    public function show(ContentPlanner $contentplanner)
+    {
         $contentplanner = ContentPlanner::where('id', $contentplanner->id)
-        ->first();
+            ->first();
 
         return response()->json($contentplanner);
     }
@@ -84,25 +118,25 @@ class ContentPlannerController extends Controller
         }
     }
 
-    public function getDraftContent($userId){
+    public function getDraftContent($userId)
+    {
         $draftCount =  DB::table('contentplanners')
-        ->where('user_id', $userId)
-        ->whereNull('deleted_at')
-        ->where('status', 'Draft')
-        ->count();
+            ->where('user_id', $userId)
+            ->whereNull('deleted_at')
+            ->where('status', 'Draft')
+            ->count();
 
         return $draftCount;
     }
 
-    public function getScheduledContent($userId){
+    public function getScheduledContent($userId)
+    {
         $scheduledCount =  DB::table('contentplanners')
-        ->where('user_id', $userId)
-        ->whereNull('deleted_at')
-        ->where('status', 'Scheduled')
-        ->count();
+            ->where('user_id', $userId)
+            ->whereNull('deleted_at')
+            ->where('status', 'Scheduled')
+            ->count();
 
         return $scheduledCount;
     }
 }
-
-
